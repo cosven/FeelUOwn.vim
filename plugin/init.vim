@@ -1,11 +1,3 @@
-" feeluown.vim
-" -------------
-"
-" songs buffer name: songs.feeluown
-" playlists buffer name: playlists.feeluown
-"
-let s:songsBufferName = "songs.feeluown" 
-
 " --------------------------------------
 " code in this block are copied from  http://majutsushi.github.com/tagbar/
 "
@@ -26,7 +18,7 @@ endfunction
 " Mark window with a window-local variable so we can jump back to it even if
 " the window numbers have changed.
 function! s:mark_window() abort
-    let w:tagbar_mark = 1
+    let w:userwin_mark = 1
 endfunction
 
 " s:goto_markedwin() {{{2
@@ -35,32 +27,19 @@ function! s:goto_markedwin(...) abort
     let noauto = a:0 > 0 ? a:1 : 0
     for window in range(1, winnr('$'))
         call s:goto_win(window, noauto)
-        if exists('w:tagbar_mark')
-            unlet w:tagbar_mark
+        if exists('w:userwin_mark')
+            unlet w:userwin_mark
             break
         endif
     endfor
 endfunction
 
+" code in this block are copied from  http://majutsushi.github.com/tagbar/
 " --------------------------------------
 
 
 filetype plugin on
 au! BufRead,BufNewFile *.feeluown set filetype=feeluown
-
-func! SongsBufferExists()
-    if bufwinnr(s:songsBufferName) > 0
-        echo "feeluown: songs buffers already exists."
-        return 1
-    endif
-    return 0
-endfunc
-
-func! CreateSongsBuffer(...)
-    if SongsBufferExists() > 0
-        bwipeout s:songsBufferName
-    endif
-endfunc
 
 func! ToggleFeeluownUser(...)
     let fuwinnr = bufwinnr('user.feeluown')
@@ -76,7 +55,35 @@ func! ToggleFeeluownUser(...)
             call s:goto_markedwin()
         endif
     else
-        FeeluownShowUser
+        exec 'keepalt botright vertical 33 split user.feeluown'
+        exec 'buffer user.feeluown'
+        nnoremap <buffer> <CR> :call LoadPlaylist()<CR>
+        exec 'FeeluownFillUserWin'
+        setlocal nonumber nomodifiable buftype=nofile
+            \ bufhidden=wipe readonly nobuflisted noswapfile
+            \ winfixwidth
+    endif
+endfunc
+
+
+func! LoadPlaylist(...)
+    let fuwinnr = bufwinnr('user.feeluown')
+    if winnr() != fuwinnr
+        echo 'I cant do this'
+    else
+        let linetxt = getline('.')
+        let fswinnr = bufwinnr('songs.feeluown')
+        if fswinnr != -1
+            call s:goto_win(fswinnr)
+            bwipeout
+        endif
+        vsplit songs.feeluown
+        buffer songs.feeluown
+        nnoremap <buffer> <CR> :FeeluownPlaySong<CR>
+        exec 'FeeluownLoadPlaylist ' . linetxt
+        exec 'Tab /|'
+        setlocal nonumber nomodifiable buftype=nofile
+            \ bufhidden=wipe readonly nobuflisted noswapfile
     endif
 endfunc
 
