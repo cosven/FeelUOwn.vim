@@ -84,6 +84,7 @@ func! LoadPlaylist(...)
         exec 'Tab /|'
         setlocal nonumber nomodifiable buftype=nofile
             \ bufhidden=wipe readonly nobuflisted noswapfile
+        only
     endif
 endfunc
 

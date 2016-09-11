@@ -37,7 +37,8 @@ class Feeluown(object):
         playlist = self.playlists[index]
         self.songs = playlist.songs
         self.vim.current.buffer[0] = ' | 歌曲名 | 歌手名 | 专辑名 '
-        self.vim.current.buffer[1:] = [
+        self.vim.current.buffer.append(' | | | ')
+        self.vim.current.buffer[2:] = [
             str(index) + ' | ' + song.title + ' | ' + song.artists_name +
             ' | ' + song.album_name
             for index, song in enumerate(playlist.songs)]
@@ -48,8 +49,8 @@ class Feeluown(object):
         song = self.songs[index]
         if self.handler is not None:
             self.handler.stdin.write(b'q')
-            self.handler.stdin.flush()
             try:
+                self.handler.stdin.flush()
                 self.handler.stdin.close()
             except:
                 pass
