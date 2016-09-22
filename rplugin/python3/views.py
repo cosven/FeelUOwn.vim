@@ -5,14 +5,15 @@ import neovim
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-from lib.model import NUserModel
+from fuocore.models import NUserModel
+from fuocore.player import Player
 
 
 @neovim.plugin
 class Feeluown(object):
     def __init__(self, vim):
         self.vim = vim
-        self.handler = None
+        self.player = Player()
         self.user = NUserModel.load()
         self.playlists = self.user.playlists
         self.songs = []
@@ -47,32 +48,12 @@ class Feeluown(object):
     def play_song(self):
         index = int(self.vim.current.line.split('|')[0])
         song = self.songs[index]
-        if self.handler is not None:
-            self.handler.stdin.write(b'q')
-            try:
-                self.handler.stdin.flush()
-                self.handler.stdin.close()
-            except:
-                pass
-            self.handler.wait()
-            self.handler.kill()
-        self.handler = subprocess.Popen(['mplayer', song.url],
-                                        stderr=subprocess.DEVNULL,
-                                        stdout=subprocess.DEVNULL,
-                                        stdin=subprocess.PIPE)
+        self.player.play_song(song.url)
 
     @neovim.command('FeeluownPlayOrPause')
-    def pause(self):
-        self.handler.stdin.write(b'p')
-        self.handler.stdin.flush()
+    def toggle(self):
+        self.player.toggle()
 
     @neovim.shutdown_hook
     def on_shutdown(self):
-        self.handler.stdin.write(b'q')
-        self.handler.stdin.flush()
-        try:
-            self.handler.stdin.close()
-        except:
-            pass
-        self.handler.wait()
-        self.handler.kill()
+        self.player.destroy()
