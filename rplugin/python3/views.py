@@ -1,9 +1,4 @@
-import os
-import subprocess
-import sys
 import neovim
-
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from fuocore.models import NUserModel
 from fuocore.player import Player
@@ -17,6 +12,10 @@ class Feeluown(object):
         self.user = NUserModel.load()
         self.playlists = self.user.playlists
         self.songs = []
+
+        self.player.finished.connect(self.on_player_finished)
+        self.player.position_changed.connect(self.on_player_position_changed)
+        self.player.state_changed.connect(self.on_player_state_changed)
 
     @neovim.command('Feeluown')
     def feeluown(self):
@@ -57,3 +56,12 @@ class Feeluown(object):
     @neovim.shutdown_hook
     def on_shutdown(self):
         self.player.destroy()
+
+    def on_player_finished(self):
+        pass
+
+    def on_player_position_changed(self):
+        pass
+    
+    def on_player_state_changed(self):
+        pass
