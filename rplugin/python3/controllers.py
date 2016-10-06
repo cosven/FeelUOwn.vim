@@ -67,7 +67,7 @@ class Feeluown(object):
 
     @neovim.shutdown_hook
     def on_shutdown(self):
-        self.player.destroy()
+        self.player.shutdown()
 
     def on_player_position_changed(self):
         pass
