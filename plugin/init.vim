@@ -90,3 +90,6 @@ endfunc
 
 
 nnoremap <leader>ftu :call ToggleFeeluownUser()<cr>
+nnoremap <leader>fpn :call FeeluownPlayNext()<cr>
+nnoremap <leader>fpp :call FeeluownPlayPrevious()<cr>
+nnoremap <leader>fpt :call FeeluownPlayOrPause()<cr>

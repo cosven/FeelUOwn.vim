@@ -11,9 +11,9 @@ class Feeluown(object):
         self.player = Player()
         self.user = NUserModel.load()
         self.playlists = self.user.playlists
-        self.songs = []
 
-        self.player.finished.connect(self.on_player_finished)
+        self.ui_cur_playlist = None
+
         self.player.position_changed.connect(self.on_player_position_changed)
         self.player.state_changed.connect(self.on_player_state_changed)
 
@@ -35,7 +35,7 @@ class Feeluown(object):
     def load_playlist(self, args):
         index = int(args[0].split('.')[0])
         playlist = self.playlists[index]
-        self.songs = playlist.songs
+        self.ui_cur_playlist = playlist
         self.vim.current.buffer[0] = ' | 歌曲名 | 歌手名 | 专辑名 '
         self.vim.current.buffer.append(' | | | ')
         self.vim.current.buffer[2:] = [
@@ -43,11 +43,23 @@ class Feeluown(object):
             ' | ' + song.album_name
             for index, song in enumerate(playlist.songs)]
 
+    @neovim.command('FeeluownPlayAll')
+    def __play_all(self):
+        self.player.play_songs(self.ui_cur_playlist.songs)
+
     @neovim.command('FeeluownPlaySong')
-    def play_song(self):
+    def __play_song(self):
         index = int(self.vim.current.line.split('|')[0])
-        song = self.songs[index]
-        self.player.play_song(song.url)
+        song = self.ui_cur_playlist.songs[index]
+        self._play(song)
+
+    @neovim.command('FeeluownPlayNext')
+    def __play_next(self):
+        self.player.play_next()
+
+    @neovim.command('FeeluownPlayPrevious')
+    def __play_last(self):
+        self.player.play_last()
 
     @neovim.command('FeeluownPlayOrPause')
     def toggle(self):
@@ -57,11 +69,11 @@ class Feeluown(object):
     def on_shutdown(self):
         self.player.destroy()
 
-    def on_player_finished(self):
-        pass
-
     def on_player_position_changed(self):
         pass
-    
+
     def on_player_state_changed(self):
         pass
+
+    def _play(self, song):
+        self.player.play_song(song)
