@@ -88,6 +88,42 @@ func! LoadPlaylist(...)
     endif
 endfunc
 
+func! GetSep()
+    return "\ue0b1"
+endfunc
+
+func! GetReverseSep()
+    return "\ue0b3"
+endfunc
+
+func! GetPlayerState()
+    return "Playing"
+endfunc
+
+func! GetPlayerPosition()
+    return "03:45"
+endfunc
+
+func! GetPlayerMode()
+    return "Random"
+endfunc
+
+func! CustomizeStatusLinea(title, artist_name, player_position, player_state, player_mode)
+    set statusline=%#Search#\ %{GetPlayerState()}\ 
+    set statusline+=%#MatchParen#\ %{GetPlayerMode()}\ 
+    set statusline+=%#TablineFill#\ %{GetPlayerPosition()}\ 
+    set statusline+=%#StatusLine#
+    set statusline+=%=
+    " set statusline+=%#Structure#%{GetReverseSep()}
+    set statusline+=%#StatusLine#
+    set statusline+=%#String#\ a:title
+    set statusline+=%#Tag#\ -\ 
+    set statusline+=%#Boolean#a:artist_name 
+endfunc
+
+let w:airline_disabled=1
+call CustomizeStatusLinea('Sugar', 'Maroon5', '4:40', 'Playing', 'Random')
+
 
 nnoremap <leader>ftu :call ToggleFeeluownUser()<cr>
 nnoremap <leader>fpn :FeeluownPlayNext<cr>
