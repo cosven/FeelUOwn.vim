@@ -88,6 +88,11 @@ func! LoadPlaylist(...)
     endif
 endfunc
 
+let g:FeeluownPlayerPosition = '00:00'
+let g:FeeluownPlayerMode = 'Loop'
+let g:FeeluownPlayerState = 'Stopped'
+let g:FeeluownPlayerSong = ''   " song title with artist name
+
 func! GetSep()
     return "\ue0b1"
 endfunc
@@ -97,18 +102,22 @@ func! GetReverseSep()
 endfunc
 
 func! GetPlayerState()
-    return "Playing"
+    return g:FeeluownPlayerState
 endfunc
 
 func! GetPlayerPosition()
-    return "03:45"
+    return g:FeeluownPlayerPosition
+endfunc
+
+func! GetPlayerSong()
+    return g:FeeluownPlayerSong
 endfunc
 
 func! GetPlayerMode()
-    return "Random"
+    return g:FeeluownPlayerMode
 endfunc
 
-func! CustomizeStatusLinea(title, artist_name, player_position, player_state, player_mode)
+func! UpdateStatusline()
     let w:airline_disabled=1
     set statusline=%#Search#\ %{GetPlayerState()}\ 
     set statusline+=%#MatchParen#\ %{GetPlayerMode()}\ 
@@ -117,12 +126,10 @@ func! CustomizeStatusLinea(title, artist_name, player_position, player_state, pl
     set statusline+=%=
     " set statusline+=%#Structure#%{GetReverseSep()}
     set statusline+=%#StatusLine#
-    set statusline+=%#String#\ a:title
-    set statusline+=%#Tag#\ -\ 
-    set statusline+=%#Boolean#a:artist_name 
+    set statusline+=%#String#\ %{GetPlayerSong()}
 endfunc
 
-au! BufRead,BufNewFile *.feeluown call CustomizeStatusLinea('Sugar', 'Maroon5', '4:40', 'Playing', 'Random')
+au! BufRead,BufNewFile *.feeluown call UpdateStatusline()
 
 nnoremap <leader>ftu :call ToggleFeeluownUser()<cr>
 nnoremap <leader>fpn :FeeluownPlayNext<cr>

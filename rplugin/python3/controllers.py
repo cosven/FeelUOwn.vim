@@ -1,3 +1,4 @@
+import logging
 import neovim
 
 from fuocore.models import NUserModel
@@ -14,8 +15,8 @@ class Feeluown(object):
 
         self.ui_cur_playlist = None
 
-        self.player.position_changed.connect(self.on_player_position_changed)
-        self.player.state_changed.connect(self.on_player_state_changed)
+        # self.player.position_changed.connect(self.on_player_position_changed)
+        # self.player.state_changed.connect(self.on_player_state_changed)
 
     @neovim.command('Feeluown')
     def feeluown(self):
@@ -70,10 +71,16 @@ class Feeluown(object):
         self.player.shutdown()
 
     def on_player_position_changed(self):
-        pass
+        self.vim.command('let g:FeeluownPlayerPosition="%s"' %
+                         self.player.position)
+        self.vim.command('call UpdateStatusline()')
 
     def on_player_state_changed(self):
-        pass
+        self.vim.command('let g:FeeluownPlayerState="%s"' % self.player.state)
+        self.vim.command('call UpdateStatusline()')
 
     def _play(self, song):
         self.player.play_song(song)
+        self.vim.command('let g:FeeluownPlayerSong="%s"' %
+                         (song.title + ' - ' + song.artists_name))
+        self.vim.command('call UpdateStatusline()')
