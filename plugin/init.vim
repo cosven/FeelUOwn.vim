@@ -109,6 +109,7 @@ func! GetPlayerMode()
 endfunc
 
 func! CustomizeStatusLinea(title, artist_name, player_position, player_state, player_mode)
+    let w:airline_disabled=1
     set statusline=%#Search#\ %{GetPlayerState()}\ 
     set statusline+=%#MatchParen#\ %{GetPlayerMode()}\ 
     set statusline+=%#TablineFill#\ %{GetPlayerPosition()}\ 
@@ -121,9 +122,7 @@ func! CustomizeStatusLinea(title, artist_name, player_position, player_state, pl
     set statusline+=%#Boolean#a:artist_name 
 endfunc
 
-let w:airline_disabled=1
-call CustomizeStatusLinea('Sugar', 'Maroon5', '4:40', 'Playing', 'Random')
-
+au! BufRead,BufNewFile *.feeluown call CustomizeStatusLinea('Sugar', 'Maroon5', '4:40', 'Playing', 'Random')
 
 nnoremap <leader>ftu :call ToggleFeeluownUser()<cr>
 nnoremap <leader>fpn :FeeluownPlayNext<cr>
