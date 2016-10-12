@@ -131,7 +131,7 @@ endfunc
 
 au! BufRead,BufNewFile *.feeluown call UpdateStatusline()
 
-nnoremap <leader>ftu :call ToggleFeeluownUser()<cr>
+nnoremap <leader>ftu :Feeluown<cr>
 nnoremap <leader>fpn :FeeluownPlayNext<cr>
 nnoremap <leader>fpp :FeeluownPlayPrevious<cr>
 nnoremap <leader>fpt :FeeluownPlayOrPause<cr>

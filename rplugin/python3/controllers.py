@@ -1,5 +1,5 @@
-import logging
 import neovim
+import threading
 
 from fuocore.models import NUserModel
 from fuocore.player import Player
@@ -15,11 +15,23 @@ class Feeluown(object):
 
         self.ui_cur_playlist = None
 
-        # self.player.position_changed.connect(self.on_player_position_changed)
-        # self.player.state_changed.connect(self.on_player_state_changed)
+        self.is_running = False
+
+        self.player.position_changed.connect(self.on_player_position_changed)
+        self.player.state_changed.connect(self.on_player_state_changed)
+
+    def _t(self):
+        while True:
+            if self.player._ready_to_exit_flag:
+                break
+            signal = self.player._signal_queue.get()
+            self.vim.async_call(signal.emit)
 
     @neovim.command('Feeluown')
     def feeluown(self):
+        if not self.is_running:
+            threading.Thread(target=self._t).start()
+            self.is_running = True
         self.vim.command('call ToggleFeeluownUser()')
 
     @neovim.command('FeeluownFillUserWin', sync=True)
