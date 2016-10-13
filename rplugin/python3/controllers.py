@@ -5,6 +5,15 @@ from fuocore.models import NUserModel
 from fuocore.player import Player
 
 
+def _format_seconds(sec):
+    '''format seconds to 00:00 form'''
+    sec = int(sec)
+    minute = int(sec / 60)
+    seconds = int(sec % 60)
+    f = lambda x: str(x) if x >= 10 else ('0' + str(x))
+    return f(minute) + ':' + f(seconds)
+
+
 @neovim.plugin
 class Feeluown(object):
     def __init__(self, vim):
@@ -84,7 +93,7 @@ class Feeluown(object):
 
     def on_player_position_changed(self):
         self.vim.command('let g:FeeluownPlayerPosition="%s"' %
-                         self.player.position)
+                         _format_seconds(self.player.position))
         self.vim.command('call UpdateStatusline()')
 
     def on_player_state_changed(self):
