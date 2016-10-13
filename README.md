@@ -1,9 +1,9 @@
 # feeluown.vim
 Music player for neovim, Still in development.
 
-#### Dependencies Install
+> If you are the user of [FeelUOwn](https://github.com/cosven/feeluown) and [neovim](https://github.com/neovim/neovim), then, congratulations. You can follow the instruction below to use this plugin.
 
-**If you are FeelUOwn and neovim user, then, congratulations. You can follow the instruction below to use this plugin.**
+#### Dependencies Install
 
 ```sh
 apt-get install mpg123
